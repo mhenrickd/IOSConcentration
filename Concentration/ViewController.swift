@@ -18,12 +18,26 @@ class ViewController: UIViewController {
     
     private(set) var flipCount = 0{
         didSet {
-            flipCountLabel.text = "Flips: \(flipCount)"
+           updateFlipCountLabel()
         }
     }
-    @IBOutlet private weak var flipCountLabel: UILabel!
-    @IBOutlet private var cardButtons: [UIButton]!
     
+    private func updateFlipCountLabel() {
+        let attributes: [NSAttributedString.Key:Any] = [
+            .strokeWidth : 5.0,
+            .strokeColor : #colorLiteral(red: 1, green: 0.5763723254, blue: 0, alpha: 1)
+        ]
+        
+        let attributedString = NSAttributedString(string: "Flips: \(flipCount)", attributes:  attributes)
+        flipCountLabel.attributedText = attributedString
+    }
+    
+    @IBOutlet private weak var flipCountLabel: UILabel! {
+        didSet {
+            updateFlipCountLabel()
+        } 
+    }
+    @IBOutlet private var cardButtons: [UIButton]!
     
     @IBAction private func touchCard(_ sender: UIButton) {
         flipCount+=1
@@ -51,24 +65,22 @@ class ViewController: UIViewController {
         }
     }
     
-    private var emojiChoices = ["🦇","😱","🎃","👻","😈","🤡","👹","💀","🙀"]
-    
-    private var emoji = [Int:String]()// dictionary
+    //private var emojiChoices = ["🦇","😱","🎃","👻","😈","🤡","👹","💀","🙀"]
+    private var emojiChoices = "🦇😱🎃👻😈🤡👹💀🙀"
+
+    private var emoji = [Card:String]()// dictionary
     
     private  func emoji(for card: Card) -> String{
-        if emoji[card.identifier] == nil , emojiChoices.count > 0 { // dois if um dentro do outro separados com ","
-            let x = 5.arc4random
-            let randomIndex = Int (arc4random_uniform(UInt32(emojiChoices.count)))
-            emoji[card.identifier] = emojiChoices.remove(at: emojiChoices.count.arc4random)
+        if emoji[card] == nil , emojiChoices.count > 0 { // dois if um dentro do outro separados com ","
+            //let x = 5.arc4random
+            //let randomIndex = Int (arc4random_uniform(UInt32(emojiChoices.count)))
+            let randomStringIndex = emojiChoices.index(emojiChoices.startIndex, offsetBy: emojiChoices.count.arc4random)
+            emoji[card] = String(emojiChoices.remove(at: randomStringIndex))
             
         }
-        
-        return emoji[card.identifier] ?? "?"
-        
+        return emoji[card] ?? "?"
     }
-    
 }
-
     extension Int {
         var arc4random: Int {
             if self > 0 {
